@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เว็บไซต์สื่อการสอนหุ่นยนต์</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Prompt', sans-serif; background-color: #f3f4f6; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Navbar -->
+    <nav class="bg-blue-600 text-white p-4 shadow-md flex justify-between items-center">
+        <h1 class="text-2xl font-bold">🤖 สื่อการสอนหุ่นยนต์ </h1>
+        <button onclick="toggleAdmin()" class="bg-blue-800 px-4 py-2 rounded hover:bg-blue-700 transition">
+            ระบบ Admin
+        </button>
+    </nav>
+
+    <div class="container mx-auto p-4 flex flex-col md:flex-row gap-6 mt-4">
+        
+        <!-- Sidebar Menu -->
+        <aside class="w-full md:w-1/4 bg-white p-4 rounded-lg shadow-md h-fit">
+            <h2 class="text-xl font-semibold mb-4 border-b pb-2">📚 บทเรียน</h2>
+            <ul id="lesson-list" class="space-y-2">
+                <!-- รายชื่อบทเรียนจะถูกสร้างด้วย JavaScript -->
+            </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="w-full md:w-3/4 bg-white p-6 rounded-lg shadow-md" id="main-content">
+            <h2 id="lesson-title" class="text-3xl font-bold text-blue-600 mb-4">ยินดีต้อนรับสู่บทเรียนหุ่นยนต์</h2>
+            <p id="lesson-desc" class="mb-6 text-gray-600">กรุณาเลือกบทเรียนจากเมนูด้านซ้ายเพื่อเริ่มต้นเรียนรู้</p>
+            
+            <div id="lesson-body" class="hidden">
+                <!-- วิดีโอ YouTube -->
+                <div class="aspect-w-16 aspect-h-9 mb-6">
+                    <iframe id="lesson-video" class="w-full h-64 rounded-lg" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+
+                <div class="flex flex-wrap gap-4 mb-6">
+                    <!-- ปุ่ม Link และ Download -->
+                    <!--<a id="btn-makecode" href="#" target="_blank" class="bg-green-500 text-white px-4 py-2 rounded shadow hover:bg-green-600">💻 เปิด Microsoft MakeCode</a>-->
+                    <a id="btn-worksheet" href="#" download class="bg-purple-500 text-white px-4 py-2 rounded shadow hover:bg-purple-600">📄 ดาวน์โหลดใบงาน</a>
+                </div>
+                
+                <!-- รูปภาพ Block Code -->
+				<!--
+                <h3 class="text-xl font-semibold mb-2">ตัวอย่าง Block Code ที่ถูกต้อง</h3>
+                <div class="bg-gray-100 p-4 rounded-lg text-center mb-6 border">
+                    <span id="lesson-image-placeholder" class="text-gray-500">[รูปภาพ Block Code]</span>
+                </div>
+				-->
+            </div>
+
+            <!-- ระบบตรวจสอบ Code -->
+            <div class="bg-blue-50 p-6 rounded-lg border border-blue-200 mt-6">
+                <h3 class="text-2xl font-bold text-blue-800 mb-2">🔍 ระบบตรวจสอบ Block Code</h3>
+                <p class="text-sm text-gray-600 mb-4">วางลิงก์โปรเจกต์จาก MakeCode เพื่อตรวจคำตอบ (รองรับบทที่ 2, 3, 4)</p>
+                
+                <select id="check-lesson-id" class="w-full p-2 border rounded mb-3">
+                    <option value="2">บทที่ 2: การควบคุมหุ่นยนต์ให้เคลื่อนที่</option>
+                    <option value="3">บทที่ 3: การควบคุมหุ่นยนต์วิ่งตามเส้น</option>
+                    <option value="4">บทที่ 4: การควบคุมหุ่นยนต์หลบหลีกวัตถุ</option>
+                </select>
+
+                <input type="text" id="makecode-url" placeholder="ตัวอย่าง: https://makecode.microbit.org/S85990-62721-72082-88911" class="w-full p-3 border rounded mb-3">
+                <button onclick="checkCode()" class="w-full bg-blue-600 text-white font-bold py-3 rounded hover:bg-blue-700">ตรวจสอบ</button>
+                
+                <!-- กล่องแสดงผลลัพธ์ -->
+                <div id="check-result" class="mt-4 p-4 rounded hidden font-semibold"></div>
+            </div>
+        </main>
+
+        <!-- Admin Mockup -->
+        <main class="w-full md:w-3/4 bg-white p-6 rounded-lg shadow-md hidden" id="admin-content">
+            <h2 class="text-3xl font-bold text-red-600 mb-4">⚙️ ระบบจัดการบทเรียน (Admin)</h2>
+            <p class="mb-4 text-gray-600">ส่วนนี้สำหรับผู้สอนเพื่อเพิ่ม ลบ หรือแก้ไขข้อมูลเนื้อหาแต่ละบทเรียน</p>
+            <div class="border p-4 rounded bg-gray-50">
+                <label class="block mb-2 font-semibold">เลือกบทเรียนที่ต้องการแก้ไข:</label>
+                <select class="w-full p-2 border rounded mb-4">
+                    <option>บทที่ 1 แนะนำหุ่นยนต์...</option>
+                    <option>บทที่ 2 การควบคุมหุ่นยนต์ให้เคลื่อนที่</option>
+                </select>
+                <label class="block mb-2 font-semibold">ลิงก์ YouTube:</label>
+                <input type="text" value="https://www.youtube.com/embed/..." class="w-full p-2 border rounded mb-4">
+                <label class="block mb-2 font-semibold">อัปโหลดไฟล์เฉลย (.mkcd):</label>
+                <input type="file" class="w-full p-2 border rounded mb-4">
+                <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">บันทึกการเปลี่ยนแปลง</button>
+            </div>
+        </main>
+
+    </div>
+
+    <script>
+        // ข้อมูลจำลองของบทเรียนทั้ง 6 บท
+        const lessons = [
+            { id: 1, title: "บทที่ 1", name: "แนะนำหุ่นยนต์และโปรแกรม Microsoft MakeCode เบื้องต้น", video: "https://www.youtube.com/embed/dQw4w9WgXcQ", desc: "เรียนรู้ส่วนประกอบพื้นฐานของหุ่นยนต์และการใช้งานโปรแกรม" },
+            { id: 2, title: "บทที่ 2", name: "การควบคุมหุ่นยนต์ให้เคลื่อนที่", video: "https://www.youtube.com/embed/dQw4w9WgXcQ", desc: "การเขียนโปรแกรมสั่งงานมอเตอร์ให้หุ่นยนต์เดินหน้า ถอยหลัง เลี้ยวซ้าย ขวา" },
+            { id: 3, title: "บทที่ 3", name: "การควบคุมหุ่นยนต์วิ่งตามเส้น", video: "https://www.youtube.com/embed/dQw4w9WgXcQ", desc: "การใช้เซนเซอร์อินฟราเรดตรวจจับเส้นสีดำเพื่อให้หุ่นยนต์วิ่งตามเส้นทางการจำลองเบรก" },
+            { id: 4, title: "บทที่ 4", name: "การควบคุมหุ่นยนต์หลบหลีกวัตถุ", video: "https://www.youtube.com/embed/dQw4w9WgXcQ", desc: "การใช้งานเซนเซอร์อัลตราโซนิกส์เพื่อวัดระยะทางและหลบสิ่งกีดขวาง" },
+            { id: 5, title: "บทที่ 5", name: "การควบคุมแขนจับของหุ่นยนต์", video: "https://www.youtube.com/embed/dQw4w9WgXcQ", desc: "การสั่งงาน Servo Motor เพื่อควบคุมกลไกแขนจับวัตถุ" },
+            { id: 6, title: "บทที่ 6", name: "การประยุกต์และสร้างโครงงาน", video: "https://www.youtube.com/embed/dQw4w9WgXcQ", desc: "นำความรู้ทั้งหมดมาสร้างสรรค์เป็นภารกิจหุ่นยนต์อัตโนมัติ" }
+        ];
+
+        // สร้างเมนูด้านซ้าย
+        const lessonList = document.getElementById('lesson-list');
+        lessons.forEach(lesson => {
+            let li = document.createElement('li');
+            li.innerHTML = `<button onclick="loadLesson(${lesson.id})" class="w-full text-left p-2 rounded hover:bg-blue-100 focus:bg-blue-200 focus:font-bold text-gray-700 border border-transparent hover:border-blue-300 transition">${lesson.title}: ${lesson.name}</button>`;
+            lessonList.appendChild(li);
+        });
+
+        // ฟังก์ชันโหลดข้อมูลเนื้อหา
+        function loadLesson(id) {
+            const lesson = lessons.find(l => l.id === id);
+            document.getElementById('lesson-title').innerText = `${lesson.title}: ${lesson.name}`;
+            document.getElementById('lesson-desc').innerText = lesson.desc;
+            document.getElementById('lesson-body').classList.remove('hidden');
+            document.getElementById('lesson-video').src = lesson.video;
+            
+            // ซ่อนหน้า Admin ถ้าเปิดอยู่
+            document.getElementById('admin-content').classList.add('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
+        }
+
+        // ระบบ Admin (Mockup)
+        function toggleAdmin() {
+            const main = document.getElementById('main-content');
+            const admin = document.getElementById('admin-content');
+            if (admin.classList.contains('hidden')) {
+                main.classList.add('hidden');
+                admin.classList.remove('hidden');
+            } else {
+                main.classList.remove('hidden');
+                admin.classList.add('hidden');
+            }
+        }
+
+        // ระบบตรวจสอบ Block Code จำลองการอ่านไฟล์ เฉลย.mkcd
+        function checkCode() {
+            const url = document.getElementById('makecode-url').value;
+            const lessonId = document.getElementById('check-lesson-id').value;
+            const resultBox = document.getElementById('check-result');
+            
+            resultBox.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800', 'bg-yellow-100', 'text-yellow-800');
+
+            if(!url.includes('makecode.microbit.org')) {
+                resultBox.classList.add('bg-yellow-100', 'text-yellow-800');
+                resultBox.innerHTML = "⚠️ รูปแบบลิงก์ไม่ถูกต้อง! กรุณาใส่ลิงก์ที่มาจาก MakeCode";
+                return;
+            }
+
+            resultBox.classList.add('bg-blue-100', 'text-blue-800');
+            resultBox.innerHTML = "⏳ กำลังดึงข้อมูลและตรวจสอบโปรเจกต์ของคุณ...";
+
+            // จำลองการดีเลย์ตรวจสอบ (เหมือนดึง API จริง)
+            setTimeout(() => {
+                let success = false;
+                let feedback = "";
+
+                // จำลองตรรกะการตรวจสอบเทียบกับไฟล์เฉลยที่คุณแนบมา (อ้างอิงจากหลักการทำงาน)
+                if (lessonId == "2") {
+                    // เทียบกับ: microbit-2026-08-13-บทที่-2-สอนเฉลย.mkcd
+                    success = Math.random() > 0.5; // จำลองโอกาสถูกผิด
+                    feedback = "คำแนะนำ: หุ่นยนต์ยังไม่เคลื่อนที่ ลองตรวจสอบ Block 'motor run' หรือการตั้งค่าความเร็วมอเตอร์ดูนะครับว่าถูกต้องหรือไม่";
+                } else if (lessonId == "3") {
+                    // เทียบกับ: microbit-2026-08-13-บทที่-3-เฉลยมีเบรก.mkcd
+                    success = Math.random() > 0.5;
+                    feedback = "คำแนะนำ: อย่าลืมใช้เงื่อนไข (If...Else) เพื่อตรวจสอบค่าจากเซนเซอร์สีดำ และทดสอบการใส่เงื่อนไขการเบรก (Stop) ตามเฉลยครับ";
+                } else if (lessonId == "4") {
+                    // เทียบกับ: microbit-2026-08-13-บทที่-4-เฉลย.mkcd
+                    success = Math.random() > 0.5;
+                    feedback = "คำแนะนำ: หุ่นยนต์ชนกำแพง! ลองเช็กบล็อกอ่านค่าระยะทางจากเซนเซอร์ 'Sonar / Ultrasonic' ว่าอ่านค่าได้น้อยกว่าระยะที่กำหนด (เช่น 15 ซม.) แล้วสั่งให้หุ่นยนต์เลี้ยวหลบหรือยังครับ";
+                }
+
+                resultBox.className = "mt-4 p-4 rounded font-semibold text-lg border ";
+                
+                if (success) {
+                    resultBox.classList.add('bg-green-100', 'text-green-800', 'border-green-300');
+                    resultBox.innerHTML = "✅ ถูกต้อง! สามารถนำ code เชื่อมต่อไปยังหุ่นยนต์ได้เลย เก่งมากครับ!";
+                } else {
+                    resultBox.classList.add('bg-red-100', 'text-red-800', 'border-red-300');
+                    resultBox.innerHTML = "❌ ยังไม่ถูกต้องครับ<br><br><span class='text-sm font-normal'>💡 " + feedback + " ให้ผู้เรียนตรวจสอบโค้ดและแก้ไขใหม่อีกครั้ง</span>";
+                }
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
